@@ -1,4 +1,4 @@
-module osinmysql
+module github.com/Jerry19900615/osin-mysql
 
 go 1.12
 
