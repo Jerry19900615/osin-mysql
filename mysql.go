@@ -42,11 +42,11 @@ var schemas = []string{`CREATE TABLE IF NOT EXISTS {prefix}client (
 	extra 		  varchar(255) NOT NULL,
 	created_at    timestamp NOT NULL
 )`, `CREATE TABLE IF NOT EXISTS {prefix}refresh (
-	token         varchar(1024) BINARY NOT NULL PRIMARY KEY,
-	access        varchar(1024) BINARY NOT NULL
+	token         varchar(1000) BINARY NOT NULL PRIMARY KEY,
+	access        varchar(1000) BINARY NOT NULL
 )`, `CREATE TABLE IF NOT EXISTS {prefix}expires (
 	id 		int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-	token		varchar(1024) BINARY NOT NULL,
+	token		varchar(1000) BINARY NOT NULL,
 	expires_at	timestamp NOT NULL,
 	INDEX expires_index (expires_at),
 	INDEX token_expires_index (token)
