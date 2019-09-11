@@ -1,6 +1,6 @@
 # osin-mysql 
 
-![Travis](https://travis-ci.org/felipeweb/osin-mysql.svg?branch=master) [![GoDoc](https://godoc.org/github.com/felipeweb/osin-mysql?status.svg)](https://godoc.org/github.com/felipeweb/osin-mysql)
+![Travis](https://travis-ci.org/felipeweb/osin-mysql.svg?branch=master) [![GoDoc](https://godoc.org/github.com/Jerry19900615/osin-mysql?status.svg)](https://godoc.org/github.com/felipeweb/osin-mysql)
 
 A MySQL storage backend for [osin oauth2](https://github.com/RangelReale/osin).
 Additional to implementing the `osin.Storage` interface, the `github.com/felipeweb/osin-mysql/storage.Storage` interface defines new methods:
@@ -27,7 +27,7 @@ Please be aware, that this library stores all data as-is and does not perform an
 
 ## Usage
 
-First, install this library with `go get "github.com/felipeweb/osin-mysql"`.
+First, install this library with `go get "github.com/Jerry19900615/osin-mysql"`.
 
 ```go
 import (
@@ -40,12 +40,7 @@ import (
 
 func main() {
     url := "user:password@tcp(host:3306)/dbname?parseTime=true"
-    db, err := sql.Open("mysql", url)
-    if err != nil {
-        return nil, err
-    }
-
-    store := mysql.New(db,"osin_")
+    store := mysql.New(url,"osin_")
     store.CreateSchemas()
     server := osin.NewServer(osin.NewServerConfig(), store)
 
