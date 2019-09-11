@@ -10,7 +10,8 @@ import (
 
 	"github.com/RangelReale/osin"
 	"github.com/ansel1/merry"
-	"github.com/felipeweb/gopher-utils"
+	gopher_utils "github.com/felipeweb/gopher-utils"
+
 	// driver for mysql db
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -26,7 +27,7 @@ var schemas = []string{`CREATE TABLE IF NOT EXISTS {prefix}client (
 	expires_in   int(10) NOT NULL,
 	scope        varchar(255) NOT NULL,
 	redirect_uri varchar(255) NOT NULL,
-	state        varchar(255) NOT NULL,
+	state        varchar(1024) NOT NULL,
 	extra 		 varchar(255) NOT NULL,
 	created_at   timestamp NOT NULL
 )`, `CREATE TABLE IF NOT EXISTS {prefix}access (
@@ -41,11 +42,11 @@ var schemas = []string{`CREATE TABLE IF NOT EXISTS {prefix}client (
 	extra 		  varchar(255) NOT NULL,
 	created_at    timestamp NOT NULL
 )`, `CREATE TABLE IF NOT EXISTS {prefix}refresh (
-	token         varchar(255) BINARY NOT NULL PRIMARY KEY,
-	access        varchar(255) BINARY NOT NULL
+	token         varchar(1024) BINARY NOT NULL PRIMARY KEY,
+	access        varchar(1024) BINARY NOT NULL
 )`, `CREATE TABLE IF NOT EXISTS {prefix}expires (
 	id 		int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-	token		varchar(255) BINARY NOT NULL,
+	token		varchar(1024) BINARY NOT NULL,
 	expires_at	timestamp NOT NULL,
 	INDEX expires_index (expires_at),
 	INDEX token_expires_index (token)
@@ -59,8 +60,23 @@ type Storage struct {
 }
 
 // New returns a new mysql storage instance.
-func New(db *sql.DB, tablePrefix string) *Storage {
-	return &Storage{db, tablePrefix}
+func New(mysqlDSN, tablePrefix string) (*Storage, error) {
+	if !strings.Contains(mysqlDSN, "parseTime") {
+		n1 := strings.LastIndex(mysqlDSN, "?")
+		n2 := strings.LastIndex(mysqlDSN, "@")
+		if n1 == -1 || (n1 >= 0 && n2 >= 0 && n1 < n2) {
+			mysqlDSN += "?parseTime=true"
+		} else {
+			mysqlDSN += "&parseTime=true"
+		}
+	}
+
+	db, err := sql.Open("mysql", mysqlDSN)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Storage{db, tablePrefix}, nil
 }
 
 // CreateSchemas creates the schemata, if they do not exist yet in the database. Returns an error if something went wrong.
